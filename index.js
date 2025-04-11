@@ -1,15 +1,37 @@
-const express = require('express');
-const { resolve } = require('path');
+const express = require("express");
+const { resolve } = require("path");
+const mongoose = require("mongoose");
+const dotenv=require("dotenv")
 
 const app = express();
-const port = 3010;
+dotenv.config()
 
-app.use(express.static('static'));
+const PORT = process.env.PORT || 3010;
+const MONGO_URI = process.env.MONGO_URI;
 
-app.get('/', (req, res) => {
-  res.sendFile(resolve(__dirname, 'pages/index.html'));
+app.use(express.static("static"));
+
+
+app.get("/", (req, res) => {
+  res.sendFile(resolve(__dirname, "pages/index.html"));
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+console.log();
+
+
+const connectDb = async () => {
+  await mongoose
+    .connect(MONGO_URI)
+    .then(() => {
+      console.log("connected to database");
+    })
+    .catch((err) => {
+      console.log("Error connecting to database:", err);
+    });
+};
+
+connectDb();
+
+app.listen(PORT, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`);
 });
